@@ -1,5 +1,7 @@
 package jaframework.imp;
 
+import java.io.RandomAccessFile;
+
 import jaframework.def.JAFile;
 import jaframework.def.JAIndex;
 import jaframework.def.JASession;
@@ -14,13 +16,24 @@ public class JASessionImp implements JASession{
 	
 	@Override
 	public <T> JAFile<T> getFile(Class<T> recClazz) {
-		String filepath = recClazz.getAnnotation(File.class).name();
-		
-		return new JAFileImp<T>();
+//		JAFileImp<T> file = new JAFileImp<T>();
+//		file.setFilepath(recClazz.getAnnotation(File.class).name());
+//		file.setAlias(recClazz.getAnnotation(File.class).alias());
+//		return file;
+		return this.getFileByAlias(recClazz.getAnnotation(File.class).alias());
 	}
 
 	@Override
 	public <T> JAFile<T> getFileByAlias(String alias) {
+		JAFactory.getClasses().get(alias);
+		
+		JAFileImp<T> file = new JAFileImp<T>();
+		// TODO Guardar la clase en el diccionario de factory y usarlo aca
+		// para ponerlo en T
+		
+//		file.setFilepath(recClazz.getAnnotation(File.class).name());
+//		file.setAlias(recClazz.getAnnotation(File.class).alias());
+		
 		return new JAFileImp<T>();
 	}
 
