@@ -1,21 +1,28 @@
 package jaframework.imp;
 
-import java.util.HashMap;
+import java.lang.reflect.Field;
 
 public class JAFileModel {
 	private String name;
-	private HashMap<String, Integer> atributos;
+	private Field[] atributos;
+	private Class<?> clazz;
 	
+	public Class<?> getClazz() {
+		return clazz;
+	}
+	public void setClazz(Class<?> clazz) {
+		this.clazz = clazz;
+	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public HashMap<String, Integer> getAtributos() {
+	public Field[] getAtributos() {
 		return atributos;
 	}
-	public void setAtributos(HashMap<String, Integer> atributos) {
+	public void setAtributos(Field[] atributos) {
 		this.atributos = atributos;
 	}
 }

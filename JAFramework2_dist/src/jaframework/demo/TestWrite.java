@@ -12,6 +12,7 @@ public class TestWrite
 		
 		JASession session = JAFactory.getSession();
 		JAFile<Alumno> f = session.getFileByAlias("ALUMNOS");
+		f.rewrite();
 		
 		Alumno a = new Alumno();
 		a.setFechaIngreso("02/05/2012");

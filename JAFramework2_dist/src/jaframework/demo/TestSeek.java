@@ -13,6 +13,7 @@ public class TestSeek
 		JASession session = JAFactory.getSession();
 		
 		JAFile<Alumno> f = session.getFileByAlias("ALUMNOS");
+		f.reset();
 		
 		Alumno a = new Alumno();
 		for(int i=0; i<f.fileSize(); i++ )

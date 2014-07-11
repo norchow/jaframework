@@ -8,55 +8,74 @@ import jaframework.def.JAFile;
 
 public class JAFileImp<T> implements JAFile<T> {
 
-	private int filepos;
+//	private int filepos;
 	private String filepath;
 //	private String filename;
 	private String alias;
 	private RandomAccessFile raf;
+	private int registerSize;
 	
+	public JAFileImp(Class<?> clazz) {
+		this.setRegisterSize(JAFactory.getRegisterSize(clazz));
+	}
+
 	@Override
 	public void reset() {
 		try {
 			raf = new RandomAccessFile(filepath, "r");
-		} catch (FileNotFoundException e) {
+			raf.seek(0);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public boolean eof() {
-		try {
-			return raf.getFilePointer()==raf.length();
-		} catch (IOException e) {
-			return false;
-		}
+		return this.filePos() == this.fileSize();
 	}
 
 	@Override
-	public boolean read(T record) {
-		// TODO Auto-generated method stub
+	public boolean read(T object) {
+		byte[] reg = new byte[this.getRegisterSize()];
+		try {
+			if(!this.eof()){
+				raf.read(reg); //El reg va por referencia y trae un registro del archivo
+				JAFactory.getObject(object, reg);
+				raf.seek(raf.getFilePointer()+2); //salvo el salto de linea
+				return true;
+			}
+			else
+				return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	@Override
 	public int filePos() {
 		try {
-			return (int) raf.getFilePointer();
+			return (int) raf.getFilePointer() / this.getRegisterSize();
 		} catch (IOException e) {
-			return 0;
+			return -1;
 		}
 	}
 
 	@Override
-	public void write(T record) {
-		// TODO Auto-generated method stub
-		
+	public void write(T object) {
+		byte[] reg = JAFactory.buildByteArray(object);
+		try {
+			raf.write(reg);
+			raf.writeBytes("\r\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void seek(int n) {
 		try {
-			raf.seek(n);
+			raf.seek(n * (this.getRegisterSize()+2));//salvo los saltos de linea
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +84,7 @@ public class JAFileImp<T> implements JAFile<T> {
 	@Override
 	public int fileSize() {
 		try {
-			return (int) raf.length();
+			return (int) raf.length() / (this.getRegisterSize()+2);//salvo los saltos de linea
 		} catch (IOException e) {
 			return 0;
 		}
@@ -106,21 +125,14 @@ public class JAFileImp<T> implements JAFile<T> {
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
 	}
-	
-//	public String getFilename() {
-//		return filename;
-//	}
-//
-//	public void setFilename(String filename) {
-//		this.filename = filename;
-//	}
-	
-	public int getFilepos() {
-		return filepos;
+
+	public int getRegisterSize() {
+		return registerSize;
 	}
 
-	public void setFilepos(int filepos) {
-		this.filepos = filepos;
+	public void setRegisterSize(int registerSize) {
+		this.registerSize = registerSize;
 	}
+
 
 }
