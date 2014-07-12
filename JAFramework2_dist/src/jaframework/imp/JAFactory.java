@@ -91,13 +91,14 @@ public class JAFactory {
 	
 	private static byte[] completeByteArray(byte[] objValue, Class<?> type,int size) {
 		byte[] objDef = new byte[size];
+		byte[] objComp = new byte[size-objValue.length];
 		if(type.equals(Integer.TYPE)){
 			for(int i = 0; i<(size-objValue.length);i++){
-				objDef[i] = '0';
+				objComp[i] = '0';
 			}
-			for(int j=0; j<objValue.length;j++){
-				objDef[j+objValue.length] = objValue[j];
-			}
+			//concateno el array de complemento con el de valores para armar el definitivo
+			System.arraycopy(objComp, 0, objDef, 0, objComp.length);
+			System.arraycopy(objValue, 0, objDef, objComp.length, objValue.length);
 		}else{
 			for(int i = 0; i<size; i++){
 				try{
